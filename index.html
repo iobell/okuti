@@ -11,11 +11,22 @@
       body {
         font-family: "UDデジタル教科書体", monospace;
         margin: 20px;
+        font-size: 18px; /* フォントサイズを大きく */
+      }
+      h1 {
+        font-size: 2em; /* ヘッダーのフォントサイズを大きく */
+      }
+      h2 {
+        font-size: 1.5em; /* サブヘッダーのフォントサイズを大きく */
       }
       input,
       button {
         padding: 10px;
         margin: 5px 0;
+        font-size: 20px; /* ボタンと入力欄のフォントサイズを大きく */
+      }
+      textarea {
+        font-size: 20px; /* テキストエリアのフォントサイズを大きく */
       }
       .teams {
         margin-top: 20px;
@@ -24,7 +35,7 @@
       }
       #lineCount {
         margin-top: 5px;
-        font-size: 14px;
+        font-size: 20px; /* 行数表示のフォントサイズを大きく */
         color: #555;
       }
       .team {
@@ -34,6 +45,7 @@
         display: flex;
         align-items: center;
         margin-bottom: 5px;
+        font-size: 20px; /* プレイヤー名のフォントサイズを大きく */
       }
       .player img {
         width: 24px;
@@ -42,6 +54,7 @@
       }
       .out {
         margin-top: 20px;
+        font-size: 20px; /* 外れ枠のフォントサイズを大きく */
       }
     </style>
   </head>
@@ -52,7 +65,7 @@
       rows="15"
       cols="30"
       placeholder="名前を改行で入力"
-      style="resize:none"
+      style="resize: none"
     ></textarea
     ><br />
     <div id="lineCount">参加人数: 0</div>
@@ -170,6 +183,6 @@
       }
     </script>
 
-    <h2> Copyright iobell&kaeru Co. Ltd. </h2>
+    <h2>Copyright iobell&kaeru Co. Ltd.</h2>
   </body>
 </html>
