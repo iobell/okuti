@@ -11,22 +11,27 @@
       body {
         font-family: "UDデジタル教科書体", monospace;
         margin: 20px;
-        font-size: 18px; /* フォントサイズを大きく */
+        font-size: 18px;
       }
       h1 {
-        font-size: 2em; /* ヘッダーのフォントサイズを大きく */
+        font-size: 2em;
       }
       h2 {
-        font-size: 1.5em; /* サブヘッダーのフォントサイズを大きく */
+        font-size: 1.5em;
       }
       input,
       button {
         padding: 10px;
         margin: 5px 0;
-        font-size: 20px; /* ボタンと入力欄のフォントサイズを大きく */
+        font-size: 20px;
       }
       textarea {
-        font-size: 20px; /* テキストエリアのフォントサイズを大きく */
+        font-size: 20px;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
       }
       .teams {
         margin-top: 20px;
@@ -35,7 +40,7 @@
       }
       #lineCount {
         margin-top: 5px;
-        font-size: 20px; /* 行数表示のフォントサイズを大きく */
+        font-size: 20px;
         color: #555;
       }
       .team {
@@ -45,7 +50,7 @@
         display: flex;
         align-items: center;
         margin-bottom: 5px;
-        font-size: 20px; /* プレイヤー名のフォントサイズを大きく */
+        font-size: 20px;
       }
       .player img {
         width: 24px;
@@ -54,22 +59,47 @@
       }
       .out {
         margin-top: 20px;
-        font-size: 20px; /* 外れ枠のフォントサイズを大きく */
+        font-size: 20px;
+      }
+      .preview {
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 300px;
+        height: 300px;
+        overflow-y: auto;
+        font-size: 20px;
+      }
+      .preview div {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .preview select {
+        margin-left: 10px;
+        font-size: 16px;
+        padding: 2px;
       }
     </style>
   </head>
   <body>
     <h1>LOLカスタムチーム分け</h1>
-    <textarea
-      id="names"
-      rows="15"
-      cols="30"
-      placeholder="名前を改行で入力"
-      style="resize: none"
-    ></textarea
-    ><br />
-    <div id="lineCount">参加人数: 0</div>
-    <button onclick="splitTeams()">チーム分け</button>
+    <div class="container">
+      <div>
+        <textarea
+          id="names"
+          rows="15"
+          cols="30"
+          placeholder="名前を改行で入力"
+          style="resize: none"
+        ></textarea>
+        <br />
+        <div id="lineCount">参加人数: 0</div>
+        <button onclick="splitTeams()">チーム分け</button>
+      </div>
+      <div class="preview" id="preview">
+        <!-- リストがここに表示されます -->
+      </div>
+    </div>
     <div class="teams" id="teams"></div>
     <div class="out" id="out"></div>
 
@@ -77,8 +107,19 @@
       const namesTextarea = document.getElementById("names");
       const lineCountDisplay = document.getElementById("lineCount");
       const outDiv = document.getElementById("out");
+      const previewDiv = document.getElementById("preview");
 
       const roleImages = {
+        "Blue-TOP": "Top_icon.webp",
+        "Blue-JUG": "Jungle_icon.webp",
+        "Blue-MID": "Middle_icon.webp",
+        "Blue-ADC": "Bottom_icon.webp",
+        "Blue-SUP": "Support_icon.webp",
+        "Red-TOP": "Top_icon.webp",
+        "Red-JUG": "Jungle_icon.webp",
+        "Red-MID": "Middle_icon.webp",
+        "Red-ADC": "Bottom_icon.webp",
+        "Red-SUP": "Support_icon.webp",
         TOP: "Top_icon.webp",
         JUG: "Jungle_icon.webp",
         MID: "Middle_icon.webp",
@@ -86,19 +127,76 @@
         SUP: "Support_icon.webp",
       };
 
+      const roles = [
+        "ランダム",
+        "外れ枠",
+        "Blue-TOP",
+        "Blue-JUG",
+        "Blue-MID",
+        "Blue-ADC",
+        "Blue-SUP",
+        "Red-TOP",
+        "Red-JUG",
+        "Red-MID",
+        "Red-ADC",
+        "Red-SUP",
+      ];
+
+      const roleToPosition = {
+        "Blue-TOP": 1,
+        "Blue-JUG": 2,
+        "Blue-MID": 3,
+        "Blue-ADC": 4,
+        "Blue-SUP": 5,
+        "Red-TOP": 6,
+        "Red-JUG": 7,
+        "Red-MID": 8,
+        "Red-ADC": 9,
+        "Red-SUP": 10,
+      };
+
       function updateLineCount() {
         const lines = namesTextarea.value
           .split("\n")
           .filter((name) => name.trim() !== "");
         lineCountDisplay.textContent = `参加人数: ${lines.length}`;
+        updatePreview(lines);
+      }
+
+      function updatePreview(names) {
+        previewDiv.innerHTML = "";
+        names.forEach((name) => {
+          const nameDiv = document.createElement("div");
+
+          const nameSpan = document.createElement("span");
+          nameSpan.textContent = name;
+
+          const select = document.createElement("select");
+          roles.forEach((role) => {
+            const option = document.createElement("option");
+            option.value = role;
+            option.textContent = role;
+            select.appendChild(option);
+          });
+          select.value = "ランダム";
+
+          nameDiv.appendChild(nameSpan);
+          nameDiv.appendChild(select);
+          previewDiv.appendChild(nameDiv);
+        });
       }
 
       namesTextarea.addEventListener("input", updateLineCount);
 
       function splitTeams() {
-        const names = namesTextarea.value
-          .split("\n")
-          .filter((name) => name.trim() !== "");
+        const names = [];
+        const selects = previewDiv.querySelectorAll("select");
+        previewDiv.querySelectorAll("div").forEach((div, index) => {
+          const name = div.querySelector("span").textContent;
+          const role = selects[index].value;
+          names.push({ name, role });
+        });
+
         if (names.length < 10) {
           alert("10人以上の名前を入力してください。");
           return;
@@ -110,34 +208,96 @@
           [names[i], names[j]] = [names[j], names[i]];
         }
 
-        // チーム参加者と外れ枠の分割
-        const teamNames = names.slice(0, 10);
-        const outNames = names.slice(10);
+        // プレイヤーを分類
+        const fixedPlayers = [];
+        const randomPlayers = [];
+        const outPlayers = [];
 
-        const teamAMembers = teamNames.slice(0, 5);
-        const teamBMembers = teamNames.slice(5, 10);
+        names.forEach((player) => {
+          if (player.role === "ランダム") {
+            randomPlayers.push(player);
+          } else if (player.role === "外れ枠") {
+            outPlayers.push(player);
+          } else if (roleToPosition[player.role]) {
+            fixedPlayers.push(player);
+          } else {
+            // 未定義の役割は外れ枠に
+            outPlayers.push(player);
+          }
+        });
 
-        const roles = ["TOP", "JUG", "MID", "ADC", "SUP"];
+        const assignedPositions = {};
+        const finalPlayers = [];
 
-        function assignRoles(team) {
-          return team.map((name, index) => ({
-            role: roles[index],
-            name: name,
-          }));
+        // 固定役割のプレイヤーを割り当て
+        fixedPlayers.forEach((player) => {
+          const position = roleToPosition[player.role];
+          if (!assignedPositions[position]) {
+            assignedPositions[position] = player;
+            finalPlayers.push({ ...player, position });
+          } else {
+            // 既に割り当て済みの場合は外れ枠に
+            outPlayers.push(player);
+          }
+        });
+
+        // 残りの位置を取得
+        const remainingPositions = [];
+        for (let pos = 1; pos <= 10; pos++) {
+          if (!assignedPositions[pos]) {
+            remainingPositions.push(pos);
+          }
         }
 
-        const assignedTeamA = assignRoles(teamAMembers);
-        const assignedTeamB = assignRoles(teamBMembers);
+        // ランダムプレイヤーを割り当て
+        randomPlayers.forEach((player) => {
+          if (remainingPositions.length > 0) {
+            const randIndex = Math.floor(
+              Math.random() * remainingPositions.length
+            );
+            const position = remainingPositions.splice(randIndex, 1)[0];
+            assignedPositions[position] = player;
+            finalPlayers.push({
+              ...player,
+              role: getRoleByPosition(position),
+              position,
+            });
+          } else {
+            outPlayers.push(player);
+          }
+        });
+
+        // 位置ごとの役割を取得
+        function getRoleByPosition(pos) {
+          if (pos >= 1 && pos <= 5) {
+            return ["TOP", "JUG", "MID", "ADC", "SUP"][pos - 1];
+          } else if (pos >= 6 && pos <= 10) {
+            return ["TOP", "JUG", "MID", "ADC", "SUP"][pos - 6];
+          }
+          return "";
+        }
+
+        // チームAとチームBに分割
+        const teamA = finalPlayers
+          .filter((player) => player.position >= 1 && player.position <= 5)
+          .sort((a, b) => a.position - b.position);
+
+        const teamB = finalPlayers
+          .filter((player) => player.position >= 6 && player.position <= 10)
+          .sort((a, b) => a.position - b.position);
+
+        // 外れ枠のプレイヤー
+        const finalOutPlayers = outPlayers;
 
         // 既存の表示をクリア
         document.getElementById("teams").innerHTML = "";
         outDiv.innerHTML = "";
 
-        displayTeams("チームA", assignedTeamA);
-        displayTeams("チームB", assignedTeamB);
+        displayTeams("チームA", teamA);
+        displayTeams("チームB", teamB);
 
-        if (outNames.length > 0) {
-          displayOut(outNames);
+        if (finalOutPlayers.length > 0) {
+          displayOut(finalOutPlayers);
         }
       }
 
@@ -155,11 +315,16 @@
           playerDiv.className = "player";
 
           const img = document.createElement("img");
-          img.src = roleImages[player.role];
+          img.src = roleImages[player.role] || "";
           img.alt = player.role;
 
+          // 役割からプレフィックスを削除
+          const displayRole = player.role.includes("-")
+            ? player.role.split("-")[1]
+            : player.role;
+
           const nameSpan = document.createElement("span");
-          nameSpan.textContent = `${player.role} ： ${player.name}`;
+          nameSpan.textContent = ` ${displayRole} ： ${player.name}`;
 
           playerDiv.appendChild(img);
           playerDiv.appendChild(nameSpan);
@@ -175,9 +340,9 @@
         outTitle.textContent = "外れ枠";
         outDivElement.appendChild(outTitle);
 
-        names.forEach((name) => {
+        names.forEach((player) => {
           const nameDiv = document.createElement("div");
-          nameDiv.textContent = name;
+          nameDiv.textContent = player.name;
           outDivElement.appendChild(nameDiv);
         });
       }
