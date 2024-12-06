@@ -111,7 +111,7 @@
 
       .preview select {
         margin-left: 10px;
-        width: 150px; /* 必要に応じて幅を調整してください */
+        width: 150px;
       }
     </style>
   </head>
@@ -121,7 +121,7 @@
       <div class="main-content">
         <textarea
           id="names"
-          rows="15"
+          rows="10"
           cols="30"
           placeholder="名前を改行で入力"
           style="resize: none"
@@ -327,8 +327,8 @@
         document.getElementById("teams").innerHTML = "";
         outDiv.innerHTML = "";
 
-        displayTeams("チームA", teamA);
-        displayTeams("チームB", teamB);
+        displayTeams("ブルーチーム", teamA);
+        displayTeams("レッドチーム", teamB);
 
         if (finalOutPlayers.length > 0) {
           displayOut(finalOutPlayers);
