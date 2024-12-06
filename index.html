@@ -28,10 +28,39 @@
       textarea {
         font-size: 20px;
       }
+
       .container {
         display: flex;
         gap: 20px;
         margin-bottom: 20px;
+        width: 100%;
+      }
+
+      .main-content {
+        flex: 1;
+      }
+
+      .sidebar {
+        width: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 100vh;
+        overflow-y: auto;
+        font-size: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          height: auto;
+        }
+      }
+
+      .container > div:first-child {
+        width: 50%;
       }
       .teams {
         margin-top: 20px;
@@ -64,8 +93,8 @@
       .preview {
         border: 1px solid #ccc;
         padding: 10px;
-        width: 300px;
-        height: 300px;
+        width: 50%;
+        height: 100%;
         overflow-y: auto;
         font-size: 20px;
       }
@@ -84,7 +113,7 @@
   <body>
     <h1>LOLカスタムチーム分け</h1>
     <div class="container">
-      <div>
+      <div class="main-content">
         <textarea
           id="names"
           rows="15"
@@ -95,13 +124,13 @@
         <br />
         <div id="lineCount">参加人数: 0</div>
         <button onclick="splitTeams()">チーム分け</button>
+        <div class="teams" id="teams"></div>
+        <div class="out" id="out"></div>
       </div>
-      <div class="preview" id="preview">
+      <div class="sidebar preview" id="preview">
         <!-- リストがここに表示されます -->
       </div>
     </div>
-    <div class="teams" id="teams"></div>
-    <div class="out" id="out"></div>
 
     <script>
       const namesTextarea = document.getElementById("names");
